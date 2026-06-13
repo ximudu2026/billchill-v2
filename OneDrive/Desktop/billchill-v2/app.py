@@ -28,6 +28,23 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
+    @app.route("/admin/init-db")
+    def admin_init_db():
+        db.create_all()
+        return "Database initialized."
+
+    @app.route("/admin/seed-synthetic")
+    def admin_seed_synthetic():
+        from scripts.seed_synthetic_cases import seed_cases
+
+        existing_synthetic_cases = BillCase.query.filter_by(source="synthetic").count()
+
+        if existing_synthetic_cases > 0:
+            return f"Synthetic cases already exist: {existing_synthetic_cases}. Not seeding again."
+
+        seed_cases(1000)
+        return "Seeded 1000 synthetic cases."
+
     @app.route("/")
     def index():
         recent_cases = BillCase.query.order_by(BillCase.created_at.desc()).limit(5).all()
@@ -146,7 +163,7 @@ def create_app():
     def benchmark():
         if request.method == "POST":
             synthetic_cases = BillCase.query.filter_by(source="synthetic").all()
-            run = create_benchmark_run(synthetic_cases)
+            create_benchmark_run(synthetic_cases)
             return redirect(url_for("benchmark"))
 
         runs = BenchmarkRun.query.order_by(BenchmarkRun.created_at.desc()).all()

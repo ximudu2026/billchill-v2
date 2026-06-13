@@ -5,7 +5,6 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT_DIR))
 
 import random
-from app import app
 from extensions import db
 from models import BillCase, AuditFinding
 from services.audit_service import basic_rule_audit
@@ -49,7 +48,6 @@ def generate_fake_bill_text():
         total += amount
         lines.append(f"{service}: ${amount}.00")
 
-    # Add a possible duplicate issue in about 20% of cases
     if random.random() < 0.2:
         duplicate_service = random.choice(selected_services)
         duplicate_amount = random.randint(200, 800)
@@ -62,7 +60,7 @@ def generate_fake_bill_text():
     return bill_text, total
 
 
-def seed_cases(n=500):
+def seed_cases(n=1000):
     created = 0
 
     for _ in range(n):
@@ -119,5 +117,7 @@ def seed_cases(n=500):
 
 
 if __name__ == "__main__":
+    from app import app
+
     with app.app_context():
-        seed_cases(500)
+        seed_cases(1000)
