@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h3 mb-3">Medical Bill Audit</h1>
+                <p class="text-muted">
+                    Upload a bill, screen for possible overcharges, estimate financial assistance eligibility,
+                    and generate a dispute letter.
+                </p>
+
+                <form action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Patient Name</label>
+                        <input type="text" name="patient_name" class="form-control" value="Demo Patient">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Provider</label>
+                        <select name="provider" class="form-select">
+                            {% for provider in providers %}
+                                <option value="{{ provider }}">{{ provider }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Household Size</label>
+                            <input type="number" name="household_size" class="form-control" value="3">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Annual Income</label>
+                            <input type="number" name="annual_income" class="form-control" value="42000">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">ZIP Code</label>
+                            <input type="text" name="zip_code" class="form-control" value="08544">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Bill PDF</label>
+                        <input type="file" name="bill_pdf" class="form-control" accept=".pdf">
+                    </div>
+
+                    <button class="btn btn-primary w-100" type="submit">
+                        Analyze Bill
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">Recent Cases</h2>
+
+                {% if recent_cases %}
+                    <div class="list-group">
+                        {% for case in recent_cases %}
+                            <a class="list-group-item list-group-item-action" href="{{ url_for('case_detail', case_id=case.id) }}">
+                                <div class="fw-bold">{{ case.provider_name }}</div>
+                                <div class="small text-muted">
+                                    {{ case.patient_name }} · Estimated savings ${{ "%.2f"|format(case.estimated_savings) }}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No cases yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

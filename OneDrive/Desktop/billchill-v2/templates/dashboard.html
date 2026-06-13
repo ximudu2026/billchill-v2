@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="h3 mb-4">Audit Dashboard</h1>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm metric-card">
+            <div class="card-body">
+                <div class="metric-label">Total Cases</div>
+                <div class="metric-value">{{ total_cases }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm metric-card">
+            <div class="card-body">
+                <div class="metric-label">Estimated Savings</div>
+                <div class="metric-value">${{ "%.0f"|format(total_savings) }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm metric-card">
+            <div class="card-body">
+                <div class="metric-label">Uploaded Cases</div>
+                <div class="metric-value">{{ uploaded_cases }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm metric-card">
+            <div class="card-body">
+                <div class="metric-label">Synthetic Cases</div>
+                <div class="metric-value">{{ synthetic_cases }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h2 class="h5">Finding Breakdown</h2>
+        <canvas id="findingChart"></canvas>
+
+        <script id="finding-data" type="application/json">
+            {{ finding_counts|tojson }}
+        </script>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="h5">Case History</h2>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Provider</th>
+                        <th>Patient</th>
+                        <th>Source</th>
+                        <th>Status</th>
+                        <th>Estimated Savings</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for case in cases %}
+                    <tr>
+                        <td>{{ case.provider_name }}</td>
+                        <td>{{ case.patient_name }}</td>
+                        <td>
+                            {% if case.source == "synthetic" %}
+                                <span class="badge bg-secondary">Synthetic</span>
+                            {% else %}
+                                <span class="badge bg-primary">Uploaded</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ case.status }}</td>
+                        <td>${{ "%.2f"|format(case.estimated_savings) }}</td>
+                        <td class="text-end">
+                            <a href="{{ url_for('case_detail', case_id=case.id) }}" class="btn btn-sm btn-outline-primary">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-muted text-center py-4">
+                            No cases yet. Seed synthetic cases or upload a bill.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

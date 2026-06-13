@@ -1,0 +1,34 @@
+body {
+    background: #f5f7fb;
+}
+
+.card {
+    border: none;
+    border-radius: 16px;
+}
+
+.metric-card {
+    min-height: 120px;
+}
+
+.metric {
+    margin-bottom: 1.25rem;
+}
+
+.metric-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.metric-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.result-box {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1rem;
+    white-space: pre-wrap;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}

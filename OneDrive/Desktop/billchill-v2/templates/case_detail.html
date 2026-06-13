@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('dashboard') }}" class="btn btn-sm btn-outline-secondary">← Back to Dashboard</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4">{{ bill_case.provider_name }}</h1>
+                <p class="text-muted mb-1">{{ bill_case.patient_name }}</p>
+                <p class="badge bg-success">{{ bill_case.status }}</p>
+
+                <hr>
+
+                <div class="metric">
+                    <div class="metric-label">Estimated Savings</div>
+                    <div class="metric-value">${{ "%.2f"|format(bill_case.estimated_savings) }}</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Eligible Discount</div>
+                    <div class="metric-value">{{ "%.0f"|format(bill_case.eligible_discount_percent) }}%</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Source</div>
+                    <div class="metric-value">{{ bill_case.source }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h2 class="h5">Findings</h2>
+
+                {% if bill_case.findings %}
+                    {% for finding in bill_case.findings %}
+                        <div class="border rounded p-3 mb-3">
+                            <div class="fw-bold">{{ finding.finding_type }}</div>
+                            <div class="small text-muted">{{ finding.service }}</div>
+                            <p class="mb-1">{{ finding.reason }}</p>
+                            <div class="small">
+                                Estimated savings: ${{ "%.2f"|format(finding.estimated_savings) }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No findings detected.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5">AI Summary</h2>
+                <pre class="result-box">{{ bill_case.ai_summary }}</pre>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">Generated Dispute Letter</h2>
+                <pre class="result-box">{{ bill_case.dispute_letter }}</pre>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

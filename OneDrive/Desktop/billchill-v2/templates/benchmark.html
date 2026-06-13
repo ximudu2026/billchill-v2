@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="h3 mb-4">Synthetic Benchmark</h1>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <p>
+            Synthetic cases loaded: <strong>{{ synthetic_count }}</strong>
+        </p>
+
+        <form method="post">
+            <button class="btn btn-primary" type="submit">
+                Run Benchmark
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="h5">Benchmark Runs</h2>
+
+        {% if runs %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Cases</th>
+                            <th>Total Simulated Savings</th>
+                            <th>Avg Savings / Case</th>
+                            <th>Manual Minutes</th>
+                            <th>Automated Minutes</th>
+                            <th>Time Reduction</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for run in runs %}
+                        <tr>
+                            <td>{{ run.cases_processed }}</td>
+                            <td>${{ "%.0f"|format(run.total_simulated_savings) }}</td>
+                            <td>${{ "%.2f"|format(run.average_savings_per_case) }}</td>
+                            <td>{{ "%.0f"|format(run.manual_minutes_estimate) }}</td>
+                            <td>{{ "%.0f"|format(run.automated_minutes_estimate) }}</td>
+                            <td>{{ "%.1f"|format(run.time_reduction_percent) }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No benchmark runs yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
