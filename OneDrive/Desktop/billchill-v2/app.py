@@ -9,6 +9,7 @@ from services.pdf_service import extract_text_from_pdf
 from services.audit_service import basic_rule_audit
 from services.ai_service import summarize_audit_with_ai, draft_dispute_letter
 from services.benchmark_service import create_benchmark_run
+from services.provider_policy_service import load_provider_policy_text
 
 
 PROVIDER_RULES = {
@@ -74,6 +75,9 @@ def create_app():
 
         bill_text = extract_text_from_pdf(bill_path)
 
+        # Load selected provider policy PDF text from provider_policies/
+        provider_policy_text = load_provider_policy_text(provider)
+
         findings, discount, total_savings = basic_rule_audit(
             bill_text=bill_text,
             household_size=household_size,
@@ -85,13 +89,15 @@ def create_app():
             findings=findings,
             household_size=household_size,
             annual_income=annual_income,
-            zip_code=zip_code
+            zip_code=zip_code,
+            provider_policy_text=provider_policy_text
         )
 
         dispute_letter = draft_dispute_letter(
             patient_name=patient_name,
             provider_name=provider,
-            ai_summary=ai_summary
+            ai_summary=ai_summary,
+            provider_policy_text=provider_policy_text
         )
 
         bill_case = BillCase(
